@@ -9,8 +9,32 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RoundedCornersRouteImport } from './routes/rounded-corners'
+import { Route as CropImageRouteImport } from './routes/crop-image'
+import { Route as CircleFrameRouteImport } from './routes/circle-frame'
+import { Route as BlurredFrameRouteImport } from './routes/blurred-frame'
 import { Route as IndexRouteImport } from './routes/index'
 
+const RoundedCornersRoute = RoundedCornersRouteImport.update({
+  id: '/rounded-corners',
+  path: '/rounded-corners',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CropImageRoute = CropImageRouteImport.update({
+  id: '/crop-image',
+  path: '/crop-image',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CircleFrameRoute = CircleFrameRouteImport.update({
+  id: '/circle-frame',
+  path: '/circle-frame',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlurredFrameRoute = BlurredFrameRouteImport.update({
+  id: '/blurred-frame',
+  path: '/blurred-frame',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +43,88 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/blurred-frame': typeof BlurredFrameRoute
+  '/circle-frame': typeof CircleFrameRoute
+  '/crop-image': typeof CropImageRoute
+  '/rounded-corners': typeof RoundedCornersRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/blurred-frame': typeof BlurredFrameRoute
+  '/circle-frame': typeof CircleFrameRoute
+  '/crop-image': typeof CropImageRoute
+  '/rounded-corners': typeof RoundedCornersRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/blurred-frame': typeof BlurredFrameRoute
+  '/circle-frame': typeof CircleFrameRoute
+  '/crop-image': typeof CropImageRoute
+  '/rounded-corners': typeof RoundedCornersRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/blurred-frame'
+    | '/circle-frame'
+    | '/crop-image'
+    | '/rounded-corners'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/blurred-frame'
+    | '/circle-frame'
+    | '/crop-image'
+    | '/rounded-corners'
+  id:
+    | '__root__'
+    | '/'
+    | '/blurred-frame'
+    | '/circle-frame'
+    | '/crop-image'
+    | '/rounded-corners'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BlurredFrameRoute: typeof BlurredFrameRoute
+  CircleFrameRoute: typeof CircleFrameRoute
+  CropImageRoute: typeof CropImageRoute
+  RoundedCornersRoute: typeof RoundedCornersRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/rounded-corners': {
+      id: '/rounded-corners'
+      path: '/rounded-corners'
+      fullPath: '/rounded-corners'
+      preLoaderRoute: typeof RoundedCornersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/crop-image': {
+      id: '/crop-image'
+      path: '/crop-image'
+      fullPath: '/crop-image'
+      preLoaderRoute: typeof CropImageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/circle-frame': {
+      id: '/circle-frame'
+      path: '/circle-frame'
+      fullPath: '/circle-frame'
+      preLoaderRoute: typeof CircleFrameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blurred-frame': {
+      id: '/blurred-frame'
+      path: '/blurred-frame'
+      fullPath: '/blurred-frame'
+      preLoaderRoute: typeof BlurredFrameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,17 +137,11 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BlurredFrameRoute: BlurredFrameRoute,
+  CircleFrameRoute: CircleFrameRoute,
+  CropImageRoute: CropImageRoute,
+  RoundedCornersRoute: RoundedCornersRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
