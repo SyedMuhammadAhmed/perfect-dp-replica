@@ -21,7 +21,7 @@ export function useReveal() {
 
 export function useCountUp(target: number, duration = 1800) {
   const [n, setN] = useState(0);
-  const ref = useRef<HTMLSpanElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const started = useRef(false);
   useEffect(() => {
     if (!ref.current) return;
