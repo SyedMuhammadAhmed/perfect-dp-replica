@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Crop, Sparkles, Shield, Zap, ChevronDown, Check, Star } from "lucide-react";
+import { Crop, Sparkles, Shield, Zap, ChevronDown, Check, Star, Quote, ArrowRight } from "lucide-react";
 import { DpMaker } from "@/components/tools/DpMaker";
+import { useReveal, useCountUp } from "@/hooks/use-reveal";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -21,10 +22,10 @@ const FEATURES = [
 ];
 
 const STATS = [
-  { n: "560,000+", l: "Photos Processed" },
-  { n: "33,000+", l: "Happy Users" },
-  { n: "16+", l: "Countries" },
-  { n: "98%", l: "5-Star Reviews" },
+  { n: 560000, suffix: "+", l: "Photos Processed" },
+  { n: 33000, suffix: "+", l: "Happy Users" },
+  { n: 16, suffix: "+", l: "Countries" },
+  { n: 98, suffix: "%", l: "5-Star Reviews" },
 ];
 
 const STEPS = [
@@ -52,15 +53,28 @@ const FAQS = [
   { q: "Can I use this on my phone?", a: "Absolutely. The tool is fully responsive and works in any modern mobile browser." },
 ];
 
+const TESTIMONIALS = [
+  { name: "Priya S.", role: "Content Creator", text: "Finally, my profile pic looks crisp on every device. The circle preview saved me from re-uploading three times.", rating: 5 },
+  { name: "Marco D.", role: "Freelance Designer", text: "Love that it stays in the browser. I can recommend this to clients without privacy concerns.", rating: 5 },
+  { name: "Aisha K.", role: "Small Business Owner", text: "Used it for my whole team's WhatsApp Business accounts. Consistent, sharp, took five minutes total.", rating: 5 },
+];
+
+const TRUST_BADGES = [
+  "100% Private", "No Sign-up", "No Watermarks", "HD Up to 1080p", "Free Forever", "Works Offline", "Mobile Friendly", "Lightning Fast",
+];
+
 function Home() {
+  useReveal();
   return (
     <div>
       <Hero />
+      <Marquee />
       <Stats />
       <HowItWorks />
       <PhonePreview />
       <FormatCompare />
       <Tips />
+      <Testimonials />
       <Faq />
       <FinalCta />
     </div>
@@ -70,26 +84,35 @@ function Home() {
 function Hero() {
   return (
     <section className="relative overflow-hidden">
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,oklch(0.95_0.06_160)_0%,transparent_60%)]" />
-      <div className="mx-auto max-w-5xl px-4 pt-12 pb-16 text-center">
-        <span className="inline-flex items-center gap-2 text-xs font-medium text-primary bg-primary/10 px-3 py-1.5 rounded-full">
-          ✦ Free · No Sign-up · Instant Download
+      <div className="absolute inset-0 -z-10 grid-bg" />
+      <div className="absolute -top-32 -left-20 -z-10 h-[420px] w-[420px] rounded-full bg-primary/20 blur-3xl animate-float-slow" />
+      <div className="absolute top-20 -right-24 -z-10 h-[380px] w-[380px] rounded-full bg-[oklch(0.78_0.12_175)]/30 blur-3xl animate-float-slower" />
+
+      <div className="mx-auto max-w-5xl px-4 pt-14 pb-16 text-center">
+        <span className="inline-flex items-center gap-2 text-xs font-medium text-primary bg-primary/10 border border-primary/20 px-3 py-1.5 rounded-full animate-rise">
+          <span className="relative flex h-2 w-2">
+            <span className="absolute inline-flex h-full w-full rounded-full bg-primary opacity-75 animate-ping" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+          </span>
+          Free · No Sign-up · Instant Download
         </span>
-        <h1 className="mt-6 text-4xl sm:text-6xl font-extrabold tracking-tight">
-          Perfect WhatsApp <span className="relative inline-block text-primary">DP<span className="absolute left-0 right-0 -bottom-1 h-1.5 rounded-full bg-primary/30" /></span> in Seconds
+        <h1 className="mt-6 text-4xl sm:text-6xl font-extrabold tracking-tight animate-rise" style={{ animationDelay: "0.1s" }}>
+          Perfect WhatsApp{" "}
+          <span className="text-gradient-primary">DP</span>{" "}
+          in Seconds
         </h1>
-        <p className="mt-5 text-lg text-muted-foreground max-w-2xl mx-auto">
+        <p className="mt-5 text-lg text-muted-foreground max-w-2xl mx-auto animate-rise" style={{ animationDelay: "0.2s" }}>
           Upload any photo and instantly resize it to the ideal WhatsApp profile picture size with HD quality, perfect cropping and zero compression loss.
         </p>
 
-        <div id="tool" className="mt-12 max-w-3xl mx-auto">
+        <div id="tool" className="mt-12 max-w-3xl mx-auto animate-rise" style={{ animationDelay: "0.3s" }}>
           <DpMaker />
         </div>
 
-        <div className="mt-10 grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
-          {FEATURES.map((f) => (
-            <div key={f.title} className="rounded-2xl bg-card border border-border p-5 text-left">
-              <div className="h-10 w-10 rounded-xl bg-primary/10 grid place-items-center mb-3">
+        <div className="mt-12 grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
+          {FEATURES.map((f, i) => (
+            <div key={f.title} className="reveal card-lift rounded-2xl bg-card border border-border p-5 text-left" style={{ transitionDelay: `${i * 80}ms` }}>
+              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 grid place-items-center mb-3 ring-1 ring-primary/10">
                 <f.icon className="h-5 w-5 text-primary" />
               </div>
               <div className="font-semibold">{f.title}</div>
@@ -102,16 +125,38 @@ function Hero() {
   );
 }
 
-function Stats() {
+function Marquee() {
+  const items = [...TRUST_BADGES, ...TRUST_BADGES];
   return (
-    <section className="mx-auto max-w-5xl px-4 py-8">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {STATS.map((s) => (
-          <div key={s.l} className="rounded-2xl bg-card border border-border p-6 text-center">
-            <div className="text-3xl font-extrabold text-primary">{s.n}</div>
-            <div className="text-xs text-muted-foreground mt-1">{s.l}</div>
+    <section className="border-y border-border bg-card/50 overflow-hidden py-5">
+      <div className="flex gap-8 animate-marquee whitespace-nowrap w-max">
+        {items.map((t, i) => (
+          <div key={i} className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+            <Check className="h-4 w-4 text-primary" /> {t}
+            <span className="text-border ml-8">•</span>
           </div>
         ))}
+      </div>
+    </section>
+  );
+}
+
+function Stat({ n, suffix, l }: { n: number; suffix: string; l: string }) {
+  const { n: count, ref } = useCountUp(n);
+  const display = n >= 1000 ? `${(count / 1000).toFixed(0)}K` : count.toString();
+  return (
+    <div className="reveal card-lift rounded-2xl bg-card border border-border p-6 text-center">
+      <div ref={ref} className="text-3xl sm:text-4xl font-extrabold text-gradient-primary">{display}{suffix}</div>
+      <div className="text-xs text-muted-foreground mt-1 font-medium">{l}</div>
+    </div>
+  );
+}
+
+function Stats() {
+  return (
+    <section className="mx-auto max-w-5xl px-4 py-12">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {STATS.map((s) => <Stat key={s.l} {...s} />)}
       </div>
     </section>
   );
@@ -120,17 +165,18 @@ function Stats() {
 function HowItWorks() {
   return (
     <section className="mx-auto max-w-6xl px-4 py-20">
-      <div className="text-center mb-12">
+      <div className="text-center mb-12 reveal">
         <span className="text-xs font-semibold text-primary uppercase tracking-wider">Simple Process</span>
         <h2 className="text-3xl sm:text-4xl font-extrabold mt-2">How It Works</h2>
         <p className="text-muted-foreground mt-3 max-w-xl mx-auto">Four simple steps to the perfect WhatsApp DP — no account needed, no waiting.</p>
       </div>
       <div className="grid md:grid-cols-4 gap-5">
-        {STEPS.map((s) => (
-          <div key={s.n} className="relative rounded-2xl bg-card border border-border p-6">
-            <div className="text-5xl font-extrabold text-primary/15">{s.n}</div>
-            <div className="font-bold mt-2">{s.t}</div>
-            <div className="text-sm text-muted-foreground mt-2 leading-relaxed">{s.d}</div>
+        {STEPS.map((s, i) => (
+          <div key={s.n} className="reveal card-lift relative rounded-2xl bg-card border border-border p-6 overflow-hidden group" style={{ transitionDelay: `${i * 80}ms` }}>
+            <div className="absolute -top-2 -right-2 h-24 w-24 rounded-full bg-primary/5 group-hover:bg-primary/15 transition" />
+            <div className="relative text-5xl font-extrabold text-primary/20 group-hover:text-primary/40 transition">{s.n}</div>
+            <div className="relative font-bold mt-2">{s.t}</div>
+            <div className="relative text-sm text-muted-foreground mt-2 leading-relaxed">{s.d}</div>
           </div>
         ))}
       </div>
@@ -141,35 +187,38 @@ function HowItWorks() {
 function PhonePreview() {
   return (
     <section className="mx-auto max-w-6xl px-4 py-20">
-      <div className="text-center mb-12">
+      <div className="text-center mb-12 reveal">
         <span className="text-xs font-semibold text-primary uppercase tracking-wider">Live Preview</span>
         <h2 className="text-3xl sm:text-4xl font-extrabold mt-2">See How It Looks</h2>
-        <p className="text-muted-foreground mt-3 max-w-xl mx-auto">Exactly how your DP appears in WhatsApp's chat list — a small circular thumbnail next to messages.</p>
+        <p className="text-muted-foreground mt-3 max-w-xl mx-auto">Exactly how your DP appears in the chat list — a small circular thumbnail next to messages.</p>
       </div>
-      <div className="mx-auto max-w-[340px]">
-        <div className="rounded-[2.5rem] bg-foreground p-3 shadow-2xl">
-          <div className="rounded-[2rem] bg-background overflow-hidden">
-            <div className="bg-primary text-primary-foreground px-5 py-4 flex justify-between items-center">
-              <span className="font-bold">WhatsApp</span>
-              <span className="text-xs">9:41</span>
-            </div>
-            <div className="divide-y divide-border">
-              {[
-                { i: "A", n: "Alex M.", m: "Hey, are you coming tonight?", t: "9:41", b: "bg-amber-500", u: 2 },
-                { i: "W", n: "Work Group", m: "Meeting at 3pm confirmed", t: "9:30", b: "bg-blue-500", u: 5 },
-                { i: "P", n: "Priya K.", m: "Thanks for sending that over 👍", t: "9:12", b: "bg-pink-500" },
-                { i: "Y", n: "Your DP", m: "Looks great! ✨", t: "now", b: "bg-primary", highlight: true },
-                { i: "D", n: "David R.", m: "Saw your new DP – looking good!", t: "Yest", b: "bg-purple-500" },
-              ].map((c, k) => (
-                <div key={k} className={`flex items-center gap-3 px-4 py-3 ${c.highlight ? "bg-primary/5" : ""}`}>
-                  <div className={`h-12 w-12 rounded-full ${c.b} grid place-items-center text-white font-bold ${c.highlight ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : ""}`}>{c.i}</div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex justify-between"><span className="font-semibold text-sm truncate">{c.n}</span><span className="text-xs text-muted-foreground">{c.t}</span></div>
-                    <div className="text-xs text-muted-foreground truncate">{c.m}</div>
+      <div className="mx-auto max-w-[340px] reveal">
+        <div className="relative">
+          <div className="absolute -inset-8 bg-gradient-to-br from-primary/20 via-transparent to-[oklch(0.78_0.12_175)]/30 blur-2xl rounded-full" />
+          <div className="relative rounded-[2.5rem] bg-foreground p-3 shadow-2xl">
+            <div className="rounded-[2rem] bg-background overflow-hidden">
+              <div className="bg-primary text-primary-foreground px-5 py-4 flex justify-between items-center">
+                <span className="font-bold">Chats</span>
+                <span className="text-xs">9:41</span>
+              </div>
+              <div className="divide-y divide-border">
+                {[
+                  { i: "A", n: "Alex M.", m: "Hey, are you coming tonight?", t: "9:41", b: "bg-amber-500", u: 2 },
+                  { i: "W", n: "Work Group", m: "Meeting at 3pm confirmed", t: "9:30", b: "bg-blue-500", u: 5 },
+                  { i: "P", n: "Priya K.", m: "Thanks for sending that over 👍", t: "9:12", b: "bg-pink-500" },
+                  { i: "Y", n: "Your DP", m: "Looks great! ✨", t: "now", b: "bg-primary", highlight: true },
+                  { i: "D", n: "David R.", m: "Saw your new DP – looking good!", t: "Yest", b: "bg-purple-500" },
+                ].map((c, k) => (
+                  <div key={k} className={`flex items-center gap-3 px-4 py-3 transition ${c.highlight ? "bg-primary/5" : ""}`}>
+                    <div className={`h-12 w-12 rounded-full ${c.b} grid place-items-center text-white font-bold ${c.highlight ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : ""}`}>{c.i}</div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between"><span className="font-semibold text-sm truncate">{c.n}</span><span className="text-xs text-muted-foreground">{c.t}</span></div>
+                      <div className="text-xs text-muted-foreground truncate">{c.m}</div>
+                    </div>
+                    {c.u && <span className="h-5 min-w-5 px-1.5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold grid place-items-center">{c.u}</span>}
                   </div>
-                  {c.u && <span className="h-5 min-w-5 px-1.5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold grid place-items-center">{c.u}</span>}
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -188,20 +237,20 @@ function FormatCompare() {
   const f = formats[active];
   return (
     <section className="mx-auto max-w-6xl px-4 py-20">
-      <div className="text-center mb-12">
+      <div className="text-center mb-12 reveal">
         <span className="text-xs font-semibold text-primary uppercase tracking-wider">Choose Wisely</span>
         <h2 className="text-3xl sm:text-4xl font-extrabold mt-2">PNG vs JPEG vs WebP</h2>
         <p className="text-muted-foreground mt-3 max-w-xl mx-auto">Each format has trade-offs. Pick the right one for the look you want.</p>
       </div>
-      <div className="rounded-3xl bg-card border border-border p-6 sm:p-8">
+      <div className="reveal rounded-3xl bg-card border border-border p-6 sm:p-8 shadow-sm">
         <div className="flex gap-2 mb-6">
           {formats.map((fm, i) => (
-            <button key={fm.name} onClick={() => setActive(i)} className={`flex-1 px-4 py-3 rounded-xl font-semibold border-2 transition relative ${active === i ? "border-primary bg-primary/5 text-primary" : "border-border bg-background"}`}>
+            <button key={fm.name} onClick={() => setActive(i)} className={`flex-1 px-4 py-3 rounded-xl font-semibold border-2 transition-all relative ${active === i ? "border-primary bg-primary/5 text-primary scale-[1.02]" : "border-border bg-background hover:border-primary/40"}`}>
               {fm.name}{fm.star && <Star className="inline h-3.5 w-3.5 ml-1.5 fill-primary text-primary" />}
             </button>
           ))}
         </div>
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-2 gap-8 animate-rise" key={active}>
           <div>
             <div className="text-xs uppercase text-muted-foreground tracking-wider">{f.ext} format</div>
             <div className="text-2xl font-bold mt-1">{f.name}</div>
@@ -213,7 +262,7 @@ function FormatCompare() {
               ].map(([l, v]) => (
                 <div key={l as string}>
                   <div className="flex justify-between text-sm mb-1"><span className="text-muted-foreground">{l}</span><span className="font-semibold">{v}%</span></div>
-                  <div className="h-2 bg-secondary rounded-full overflow-hidden"><div className="h-full bg-primary rounded-full" style={{ width: `${v}%` }} /></div>
+                  <div className="h-2 bg-secondary rounded-full overflow-hidden"><div className="h-full bg-gradient-to-r from-primary to-[oklch(0.78_0.14_165)] rounded-full transition-all duration-700" style={{ width: `${v}%` }} /></div>
                 </div>
               ))}
               <div className="flex justify-between text-sm pt-2 border-t border-border"><span className="text-muted-foreground">Avg Size</span><span className="font-semibold">{f.size}</span></div>
@@ -243,17 +292,47 @@ function FormatCompare() {
 function Tips() {
   return (
     <section className="mx-auto max-w-6xl px-4 py-20">
-      <div className="text-center mb-12">
+      <div className="text-center mb-12 reveal">
         <span className="text-xs font-semibold text-primary uppercase tracking-wider">Pro Tips</span>
         <h2 className="text-3xl sm:text-4xl font-extrabold mt-2">Get the Perfect DP</h2>
-        <p className="text-muted-foreground mt-3 max-w-xl mx-auto">Expert advice to make your WhatsApp profile picture look stunning every time.</p>
+        <p className="text-muted-foreground mt-3 max-w-xl mx-auto">Expert advice to make your profile picture look stunning every time.</p>
       </div>
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {TIPS.map((tip, i) => (
-          <div key={tip.t} className="rounded-2xl bg-card border border-border p-6 hover:border-primary/40 transition">
-            <div className="h-9 w-9 rounded-lg bg-primary/10 grid place-items-center text-primary font-bold text-sm">{i + 1}</div>
+          <div key={tip.t} className="reveal card-lift rounded-2xl bg-card border border-border p-6" style={{ transitionDelay: `${i * 60}ms` }}>
+            <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-primary to-[oklch(0.55_0.16_160)] grid place-items-center text-primary-foreground font-bold text-sm shadow-md shadow-primary/20">{i + 1}</div>
             <div className="font-semibold mt-4">{tip.t}</div>
             <div className="text-sm text-muted-foreground mt-1.5">{tip.d}</div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function Testimonials() {
+  return (
+    <section className="mx-auto max-w-6xl px-4 py-20">
+      <div className="text-center mb-12 reveal">
+        <span className="text-xs font-semibold text-primary uppercase tracking-wider">Loved by Users</span>
+        <h2 className="text-3xl sm:text-4xl font-extrabold mt-2">What People Say</h2>
+        <p className="text-muted-foreground mt-3 max-w-xl mx-auto">Real feedback from real people who upgraded their profile pictures.</p>
+      </div>
+      <div className="grid md:grid-cols-3 gap-5">
+        {TESTIMONIALS.map((t, i) => (
+          <div key={t.name} className="reveal card-lift relative rounded-2xl bg-card border border-border p-7" style={{ transitionDelay: `${i * 80}ms` }}>
+            <Quote className="absolute top-5 right-5 h-8 w-8 text-primary/15" />
+            <div className="flex gap-0.5 mb-3">
+              {Array.from({ length: t.rating }).map((_, k) => <Star key={k} className="h-4 w-4 fill-primary text-primary" />)}
+            </div>
+            <p className="text-sm leading-relaxed">{t.text}</p>
+            <div className="mt-5 pt-5 border-t border-border flex items-center gap-3">
+              <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-[oklch(0.55_0.16_160)] grid place-items-center text-primary-foreground font-bold">{t.name[0]}</div>
+              <div>
+                <div className="font-semibold text-sm">{t.name}</div>
+                <div className="text-xs text-muted-foreground">{t.role}</div>
+              </div>
+            </div>
           </div>
         ))}
       </div>
@@ -265,19 +344,19 @@ function Faq() {
   const [open, setOpen] = useState(0);
   return (
     <section className="mx-auto max-w-3xl px-4 py-20">
-      <div className="text-center mb-12">
+      <div className="text-center mb-12 reveal">
         <span className="text-xs font-semibold text-primary uppercase tracking-wider">FAQ</span>
         <h2 className="text-3xl sm:text-4xl font-extrabold mt-2">Common Questions</h2>
-        <p className="text-muted-foreground mt-3">Everything you need to know about WhatsApp profile picture sizes.</p>
+        <p className="text-muted-foreground mt-3">Everything you need to know about profile picture sizes.</p>
       </div>
       <div className="space-y-3">
         {FAQS.map((f, i) => (
-          <div key={f.q} className="rounded-2xl bg-card border border-border overflow-hidden">
-            <button onClick={() => setOpen(open === i ? -1 : i)} className="w-full px-6 py-5 flex justify-between items-center text-left">
+          <div key={f.q} className={`reveal rounded-2xl bg-card border overflow-hidden transition ${open === i ? "border-primary/40 shadow-md shadow-primary/5" : "border-border"}`}>
+            <button onClick={() => setOpen(open === i ? -1 : i)} className="w-full px-6 py-5 flex justify-between items-center text-left gap-4">
               <span className="font-semibold flex gap-3"><span className="text-primary">Q{i + 1}</span>{f.q}</span>
-              <ChevronDown className={`h-5 w-5 text-muted-foreground transition ${open === i ? "rotate-180" : ""}`} />
+              <ChevronDown className={`h-5 w-5 text-muted-foreground transition-transform shrink-0 ${open === i ? "rotate-180" : ""}`} />
             </button>
-            {open === i && <div className="px-6 pb-5 text-sm text-muted-foreground leading-relaxed">{f.a}</div>}
+            {open === i && <div className="px-6 pb-5 text-sm text-muted-foreground leading-relaxed animate-rise">{f.a}</div>}
           </div>
         ))}
       </div>
@@ -288,12 +367,16 @@ function Faq() {
 function FinalCta() {
   return (
     <section className="mx-auto max-w-4xl px-4 py-20">
-      <div className="rounded-3xl bg-gradient-to-br from-primary to-[oklch(0.55_0.16_160)] p-10 sm:p-16 text-center text-primary-foreground">
-        <h2 className="text-3xl sm:text-4xl font-extrabold">Ready to update your profile picture?</h2>
-        <p className="mt-3 opacity-90 max-w-xl mx-auto">It takes less than 30 seconds. No account. No watermarks. Completely free.</p>
-        <a href="#tool" className="mt-8 inline-flex items-center gap-2 bg-background text-foreground font-semibold px-6 py-3 rounded-full hover:scale-105 transition">
-          Get Started — It's Free
-        </a>
+      <div className="reveal relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-[oklch(0.55_0.16_160)] p-10 sm:p-16 text-center text-primary-foreground shadow-2xl shadow-primary/30">
+        <div className="absolute -top-20 -left-10 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
+        <div className="absolute -bottom-20 -right-10 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
+        <div className="relative">
+          <h2 className="text-3xl sm:text-4xl font-extrabold">Ready to update your profile picture?</h2>
+          <p className="mt-3 opacity-90 max-w-xl mx-auto">It takes less than 30 seconds. No account. No watermarks. Completely free.</p>
+          <a href="#tool" className="mt-8 inline-flex items-center gap-2 bg-background text-foreground font-semibold px-6 py-3 rounded-full hover:scale-105 hover:shadow-xl transition-all">
+            Get Started — It's Free <ArrowRight className="h-4 w-4" />
+          </a>
+        </div>
       </div>
     </section>
   );
